@@ -1,0 +1,50 @@
+\documentclass[DIN, pagenumber=false, fontsize=11pt, parskip=half]{scrartcl}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{enumitem}
+\usepackage[utf8]{inputenc} % this is needed for umlauts
+\usepackage[T1]{fontenc} 
+\usepackage{commath}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{tikz-timing}
+\usepackage{tikz}
+\usepackage{multirow}
+\usepackage{colortbl}
+\usepackage{xstring}
+\usepackage{circuitikz}
+\usepackage{listings} % needed for the inclusion of source code
+\usepackage[final]{pdfpages}
+\usepackage{subcaption}
+\usepackage{import}
+\usepackage{cleveref}
+\usepackage{bm}
+\usepackage{tcolorbox}
+
+\usetikzlibrary{calc,shapes.multipart,chains,arrows}
+
+\newcommand{\q}[1]{
+    \begin{tcolorbox}
+        #1
+    \end{tcolorbox}
+}
+
+\title{Deep Learning -- Questions}
+\author{Paul Nykiel}
+
+\begin{document}
+    \maketitle
+    \input{chapters/01-intro.tex}
+    \input{chapters/02-basics.tex}
+    \input{chapters/03-backprop.tex}
+    \input{chapters/04-optimization.tex}
+    \input{chapters/05-regularization.tex}
+    \input{chapters/06-cnn.tex}
+    \input{chapters/07-architectures.tex}
+    \input{chapters/08-autoencoder.tex}
+    \input{chapters/09-recurrent.tex}
+    \input{chapters/10-generative.tex}
+\end{document}
