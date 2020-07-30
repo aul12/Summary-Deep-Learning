@@ -2,3 +2,130 @@
 A computer program is said to learn from experience $E$ with respect to some class
 of task $T$ and a performance measure $P$, it its performance at tasks in $T$, as
 measured by $P$, improves with experience $E$.
+
+\section{Empirical Risk Minimization}
+The optimization is done on a dataset which (hopefully) represents the real-world distribution.
+
+\section{Surrogate Loss}
+Instead of optimizing the actual loss (e.g. precision), which is not differentiable, another loss (e.g. crossentropy)
+is optimized in the hope to improve precision as well.
+
+\section{Gradient Descent Variants}
+\begin{itemize}
+    \item Batch gradient descent (whole dataset)
+    \item Stochastic gradient descent (single samples)
+    \item Mini-batch gradient descent (small number of samples)
+\end{itemize}
+
+\section{Strategies for local minima}
+\begin{itemize}
+    \item Adding noise to labels
+    \item Shuffling
+    \item Better optimizer
+\end{itemize}
+
+\section{SGD with Momentum}
+We introduce a velocity term $u$ which is updated by:
+\begin{equation}
+    u \leftarrow \alpha u - \eta \nabla_w \left( \frac{1}{m} \sum_{i=1}^m L(f(x^i, w), y^i)\right)
+\end{equation}
+the parameters are then updated by:
+\begin{equation}
+    w \leftarrow w + u
+\end{equation}
+the constant $\alpha \in [0, 1]$ controls the decay of the velocity/momentum.
+
+\section{SGD with Nesterov-Momentum}
+Similar to normal momentum, but update current momentum is considered for new momentum:
+\begin{equation}
+    u \leftarrow \alpha u - \eta \nabla_w \left( \frac{1}{m} \sum_{i=1}^m L(f(x^i, w + \alpha u), y^i)\right)
+\end{equation}
+
+\section{Adagrad (Adaptive Gradient)}
+Idea: scale all updates to have similar effects. If a parameter update
+is large everytime it should be attenuated and vice versa. This is done
+by scaling the gradient by the square root of the sum of all previous squared gradients.
+
+\begin{eqnarray}
+    g &=& \nabla_w \left( \frac{1}{m} \sum_{i=1}^m L(f(x^i, w), y^i) \right) \\
+    G &\leftarrow& G + g \otimes g\ \ \text{Outer Product, only the diagonal elements} \\
+    w &\leftarrow& w - \frac{\eta}{\sqrt{G + \epsilon}} \odot g\ \ \text{all operations element wise}
+\end{eqnarray}
+Problem: Learning rate becomes arbitrary small
+
+\section{Adadelta}
+Similar to Adagrad but with decaying update sum and matching units:
+\begin{eqnarray}
+    g &=& \nabla_w \left( \frac{1}{m} \sum_{i=1}^m L(f(x^i, w), y^i) \right) \\
+    u &\leftarrow& -\frac{\text{RMS}(u)}{\text{RMS}(g)} g \\
+    w &\leftarrow& w + u
+\end{eqnarray}
+with RMS defined as:
+\begin{equation}
+    \text{RMS}(x) = \sqrt{E(x^2) + \epsilon}
+\end{equation}
+and
+\begin{equation}
+    E(x) \leftarrow \gamma E(x) + (1-\gamma) x
+\end{equation}
+Result: no global learning rate.
+
+\section{RMSprop}
+Adadelta but without units/Adagrad with exponential decay:
+
+\begin{eqnarray}
+    g &=& \nabla_w \left( \frac{1}{m} \sum_{i=1}^m L(f(x^i, w), y^i) \right) \\
+    G &\leftarrow& \alpha G + (1-\alpha) g \otimes g\ \ \text{Outer Product, only the diagonal elements} \\
+    w &\leftarrow& w - \frac{\eta}{\sqrt{G + \epsilon}} \odot g\ \ \text{all operations element wise}
+\end{eqnarray}
+
+\section{Adam (Adaptive Moment Estimation)}
+The decaying averages of both the normal and the squared gradients are computed:
+\begin{eqnarray}
+    m_t &=& \beta_1 m_{t-1} + (1- \beta_1) g_t \\
+    v_t &=& \beta_2 v_{t-1} + (1- \beta_2) g_t^2
+\end{eqnarray}
+These values are then bias compensated:
+\begin{eqnarray}
+    \hat{m}_t &=& \frac{m_t}{1-\beta_1^t} \\
+    \hat{v}_t &=& \frac{v_t}{1-\beta_2^t}
+\end{eqnarray}
+the update is then calculated as:
+\begin{eqnarray}
+    w_t = w_{t-1} + \frac{\eta}{\sqrt{\hat{v}_t} + \epsilon} \hat{m}_t
+\end{eqnarray}
+
+\section{Learning Rate}
+\begin{itemize}
+    \item Constant
+    \item Step Decay (Factor every $N$ epochs)
+    \item Inverse Decay ($\eta_t = \frac{\eta_0}{1 + c t}$)
+    \item Exponential Decay ($\eta_t = \frac{\eta_0}{\exp(ct)}$)
+    \item Cyclical Learning Rate (Cyclic oscillation between min and max)
+\end{itemize}
+
+\section{Regularization}
+\begin{itemize}
+    \item L1 (Sparse Weights)
+    \item L2 (Weight Decay)
+    \item Early Stopping
+    \item Data Augmentation
+    \item Max-Norm Constraints
+    \item Dropout (Scaling / Inverted Dropout)
+\end{itemize}
+
+\section{Glorot/Xavier Initialization}
+For MLPs:
+\begin{equation}
+    w_{i,j} \sim U(-\sqrt{\frac{6}{d_\text{in} + d_\text{out}}},\sqrt{\frac{6}{d_\text{in} + d_\text{out}}})
+\end{equation}
+
+General ($d$ inputs):
+\begin{equation}
+    w_{i,j} \sim N\left(0, \sqrt{\frac{1}{d}}\right)
+\end{equation}
+
+\section{He/Kaiming Initialization}
+\begin{equation}
+    w_{i,j} \sim N\left(0, \sqrt{\frac{1}{d}}\right)
+\end{equation}
